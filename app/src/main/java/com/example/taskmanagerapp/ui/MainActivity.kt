@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.adapter = adapter
 
         viewModel.taskList.observe(this) { tasks ->
-            adapter.submitList(tasks)
+            adapter.setTasks(tasks)
         }
 
         binding.fabAdd.setOnClickListener {

@@ -2,8 +2,6 @@ package com.example.taskmanagerapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.taskmanagerapp.databinding.ItemTaskBinding
 import com.example.taskmanagerapp.models.Task
@@ -11,7 +9,9 @@ import com.example.taskmanagerapp.models.Task
 class TaskAdapter(
     private val onEdit: (Task) -> Unit,
     private val onDelete: (String) -> Unit
-) : ListAdapter<Task, TaskAdapter.TaskViewHolder>(DiffCallback()) {
+) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+
+    private val tasks = mutableListOf<Task>()
 
     inner class TaskViewHolder(val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -21,17 +21,23 @@ class TaskAdapter(
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        val task = getItem(position)
+        val task = tasks[position]
         with(holder.binding) {
             tvTitle.text = task.title
             tvDesc.text = task.description
+            time.text = task.reminder
             btnEdit.setOnClickListener { onEdit(task) }
             btnDelete.setOnClickListener { onDelete(task.id) }
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<Task>() {
-        override fun areItemsTheSame(oldItem: Task, newItem: Task) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: Task, newItem: Task) = oldItem == newItem
+    override fun getItemCount(): Int = tasks.size
+
+    fun setTasks(newTasks: List<Task>) {
+        tasks.clear()
+        tasks.addAll(newTasks)
+        notifyDataSetChanged()
     }
+
+    fun getTask(position: Int): Task = tasks[position]
 }
